@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Objednavky</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Objednavky restaurace</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>id objednavky</th>
+        <th>stav</th>
+      </tr>
+    </thead>
+    <tbody id="orders-list"></tbody>
+  </table>
+
+  <script>
+    async function updateOrdersTable() {
+      try {
+        const res = await fetch('/orders');
+        const orders = await res.json();
+        
+        const tbody = document.getElementById('orders-list');
+        tbody.innerHTML = '';
+
+        const ids = Object.keys(orders);
+        if (ids.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="2">zadne objednavky :(</td></tr>';
+          return;
+        }
+
+        ids.forEach(id => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td><strong>${id}</strong></td><td>${orders[id]}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('chyba:', err);
+      }
+    }
+
+    updateOrdersTable();
+    setInterval(updateOrdersTable, 2000);
+  </script>
+</body>
+</html>
